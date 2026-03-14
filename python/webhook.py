@@ -56,6 +56,7 @@ GitHub Webhook 接收
 - 首次提交日期：2026-03-14
 - 最后更新日期：2026-03-14
 - 版本：1.0
+- Wiki：https://mwbbs.eu.org/wiki/index.php/GitHub#Webhooks
 """
 
 import hmac
