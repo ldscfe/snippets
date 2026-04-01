@@ -1,24 +1,30 @@
-# ==============================================================================
-# Script Name:   port_monitor.sh
-# Description:   Multi-port SSH tunnel monitoring and auto-restart service.
-# Author:        Adam Lee (ldscfe@gmail.com)
-# Date:          2026-03-20
-# Version:       1.2.0
-# License:       MIT
-# Compatibility: macOS (BSD), Linux (GNU)
-#
-# Usage:
-#   bash port_monitor.sh
-# ==============================================================================
-
 #!/bin/bash
 
-# Load common
-COMMON_LIB="$HOME/bin/common.sh"
-if [ -f "$COMMON_LIB" ]; then
-    source "$COMMON_LIB"
+HELP='==============================================================================
+Script Name:    port_monitor.sh
+Description:    Multi-port SSH tunnel monitoring and auto-restart service.
+Author:         Adam Lee (ldscfe@gmail.com)
+Date:           2026-04-01
+Version:        1.2.0
+License:        MIT
+Compatibility:  macOS (BSD), Linux (GNU)
+
+Usage:
+    port_monitor.sh
+
+Examples:
+    bash port_monitor.sh
+==============================================================================
+'
+# --- Colors ---
+LIB="$HOME/bin/common.sh"; [ -f "$LIB" ] && source "$LIB"
+# --- Help ---
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    echo -e "${YELLOW}$HELP${NC}"
+    exit 0
 fi
 
+# ----------
 # --- Configuration Section ---
 # Format: "PORT:COMMAND"
 CMD=(
