@@ -24,6 +24,13 @@ Examples:
     bash srds_perf_test.sh 5
 ==============================================================================
 '
+# --- Colors ---
+LIB="$HOME/bin/common.sh"; [ -f "$LIB" ] && source "$LIB"
+# --- Help ---
+if [[ "$1" == "-h" || "$1" == "--help" || "$#" -lt 1 ]]; then
+    echo -e "${YELLOW}$HELP${NC}"
+    exit 0
+fi
 
 case $1 in
   1)
@@ -73,17 +80,17 @@ commands_redis6=(
 )
 
 for cmd in "${commands_srds[@]}"; do
-    echo "SRDS: $cmd"
-    echo "----------------------------------------"
+    echo -e "${BLUE}SRDS: $cmd"
+    echo -e "----------------------------------------${GREEN}"
     eval $cmd
-    echo ""
+    echo -e "${NC}"
 done
 
 echo "========================================"
 
 for cmd in "${commands_redis6[@]}"; do
-    echo "Redis6: $cmd"
-    echo "----------------------------------------"
+    echo -e "${BLUE}Redis6: $cmd"
+    echo -e "----------------------------------------${GREEN}"
     eval $cmd
-    echo ""
+    echo -e "${NC}"
 done
