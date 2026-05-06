@@ -4,8 +4,8 @@ HELP='==========================================================================
 Script Name:    ugit
 Description:    Batch git operations (status/pull) for current user.
 Author:         Adam Lee (ldscfe@gmail.com)
-Date:           2026-04-29
-Version:        1.0.0
+Date:           2026-05-06
+Version:        1.1.0
 Compatibility:  macOS (BSD), Linux (GNU)
 
 Usage:
@@ -38,6 +38,7 @@ LPATH=(
     "rc-agent"
     "SRDS"
     "srds-web"
+    "wikicodec"
 )
 
 ACTION="status"
@@ -58,13 +59,29 @@ for dir in "${LPATH[@]}"; do
         else
             # Pull
             echo -e "${CYAN}Pulling:${NC} $dir"
-            (cd "$FULL_PATH" && git pull) &> /dev/null
+            (
+                cd "$FULL_PATH"
+                # Get the commit ID before pulling
+                OLD_HEAD=$(git rev-parse HEAD)
 
-            if [ $? -eq 0 ]; then
-                echo -e "${GREEN}Success: $dir${NC}"
-            else
-                echo -e "${RED}❌ Failed: $dir${NC}"
-            fi
+                # Execute pull (silent mode)
+                git pull --quiet &> /dev/null
+
+                if [ $? -eq 0 ]; then
+                    # Get the commit ID after pulling
+                    NEW_HEAD=$(git rev-parse HEAD)
+
+                    if [ "$OLD_HEAD" == "$NEW_HEAD" ]; then
+                        echo -e "   ${BLUE}➜  No changes.${NC}"
+                    else
+                        # Count the number of changed files
+                        DIFF_COUNT=$(git diff --name-only $OLD_HEAD $NEW_HEAD | wc -l | xargs)
+                        echo -e "${GREEN}Success! Updated $DIFF_COUNT files.${NC}"
+                    fi
+                else
+                    echo -e "${RED}❌ Failed: $dir${NC}"
+                fi
+            )
         fi
     else
         echo -e "${YELLOW}⚠️ Directory not found: $FULL_PATH${NC}"
