@@ -76,14 +76,14 @@ for dir in "${LPATH[@]}"; do
                     else
                         # Count the number of changed files
                         DIFF_COUNT=$(git diff --name-only $OLD_HEAD $NEW_HEAD | wc -l | xargs)
-                        echo -e "${GREEN}Success! Updated $DIFF_COUNT files.${NC}"
+                        echo -e "🚀 ${GREEN}Updated $DIFF_COUNT files.${NC}"
                     fi
                 else
-                    echo -e "${RED}❌ Failed: $dir${NC}"
+                    echo -e "❌ ${RED}Failed: $dir${NC}"
                 fi
             )
         fi
     else
-        echo -e "${YELLOW}⚠️ Directory not found: $FULL_PATH${NC}"
+        echo -e "⚠️ ${YELLOW}Directory not found: $FULL_PATH${NC}"
     fi
 done
