@@ -18,10 +18,10 @@
 | 10   | template.sh        | 脚本模板（用于快速创建新脚本的头部与结构）                     | `cp template.sh my_script.sh && vim my_script.sh`                     | 包含 header 与参数解析 |
 | 11   | shell_abc.md       | Shell 技巧与代码片段集合                                        | —                                                                    | 文档形式，包含常用命令示例 |
 | 12   | claude_check.sh    | Claude 服务相关检查与健康检测脚本                              | `./claude_check.sh`                                                    | 用于本地/容器服务检测  |
-| 13   | start_claude.sh    | 启动 Claude 相关服务或容器的脚本                               | `./start_claude.sh`                                                    | 启动并做基础检查       |
+| 13   | start_claude.sh    | 启动 Claude free 相关服务或容器的脚本                               | `./start_claude.sh`                                                    | 启动并做基础检查       |
 | 14   | push.sh            | 推送/发布相关自动化脚本（替代或补充 gitpush 场景）             | `./push.sh . "fix bug"`                                              | 可自定义 commit/message |
-| 15   | rep.sh             | 批量替换或模板化操作脚本                                       | `./rep.sh 's/old/new/g' ./path`                                        | 批量替换文件内容       |
-| 16   | ugit.sh            | 更友好的 git 操作封装脚本（常用子命令的快捷封装）              | `./ugit.sh status`                                                     | 简化常用 git 操作      |
+| 15   | rep.sh             | 在当前目录及子目录下，批量替换操作脚本 | `./rep.sh 'old' 'new'` | 批量替换内容       |
+| 16   | ugit.sh            | git 批量操作指定目录（status, pull）              | `./ugit.sh [pull]`                                                     | 简化常用 git 操作      |
 
 ### 模式参数对比（pzip.sh & tls.sh 逻辑）
 
