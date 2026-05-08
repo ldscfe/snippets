@@ -61,6 +61,22 @@ for dir in "${LPATH[@]}"; do
                 UNPUSHED=$(git rev-list --count @{u}..HEAD 2>/dev/null)
                 if [[ "$UNPUSHED" -gt 0 ]]; then
                     echo -e "    ${YELLOW}↑ $UNPUSHED commits to push${NC}"
+
+                    # confirm Y -> push
+                    echo -ne "    ${CYAN}Do you want to push now? (y/n): ${NC}"
+                    read -r CONFIRM
+                    
+                    if [[ "$CONFIRM" =~ ^[Yy]$ ]]; then
+                        echo -e "${BLUE}Pushing to remote...${NC}"
+                        git push --quiet
+                        if [ $? -eq 0 ]; then
+                            echo -e "${GREEN}✔ Push successful!${NC}"
+                        else
+                            echo -e "${RED}✘ Push failed. Check your network.${NC}"
+                        fi
+                    else
+                        echo -e "    ${BLUE}➡ Skipped push.${NC}"
+                    fi
                 fi
                 
                 if [[ -z "$ST_OUTPUT" && ("$UNPUSHED" -eq 0 || -z "$UNPUSHED") ]]; then
@@ -95,7 +111,7 @@ for dir in "${LPATH[@]}"; do
             )
         fi
     else
-        echo -e "⚠️ ${YELLOW}Directory not found: $FULL_PATH${NC}"
+        echo -e "${YELLOW}⚠ Directory not found: $FULL_PATH${NC}"
     fi
 done
 echo -e "${NC}------------------------------------------------"
