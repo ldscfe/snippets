@@ -4,8 +4,8 @@ HELP='==========================================================================
 Script Name:    ugit
 Description:    Batch git operations (status/pull) for current user.
 Author:         Adam Lee (ldscfe@gmail.com)
-Date:           2026-05-06
-Version:        1.1.0
+Date:           2026-05-08
+Version:        1.2.0
 Compatibility:  macOS (BSD), Linux (GNU)
 
 Usage:
@@ -34,11 +34,8 @@ fi
 # --- Path & Config ---
 BASE_DIR="$PWD"
 LPATH=(
-    "acds"
-    "rc-agent"
-    "SRDS"
-    "srds-web"
-    "wikicodec"
+    "ALDS"
+    "snippets"
 )
 
 ACTION="status"
@@ -55,7 +52,21 @@ for dir in "${LPATH[@]}"; do
         if [[ "$ACTION" == "status" ]]; then
             # Status
             echo -e "${CYAN}Checking:${NC} $dir"
-            (cd "$FULL_PATH" && git status -s)
+            (
+                cd "$FULL_PATH"
+
+                ST_OUTPUT=$(git status -s)
+                [[ -n "$ST_OUTPUT" ]] && echo "$ST_OUTPUT"
+
+                UNPUSHED=$(git rev-list --count @{u}..HEAD 2>/dev/null)
+                if [[ "$UNPUSHED" -gt 0 ]]; then
+                    echo -e "    ${YELLOW}↑ $UNPUSHED commits to push${NC}"
+                fi
+                
+                if [[ -z "$ST_OUTPUT" && ("$UNPUSHED" -eq 0 || -z "$UNPUSHED") ]]; then
+                    echo -e "    ${BLUE}➜ Clean${NC}"
+                fi
+            )
         else
             # Pull
             echo -e "${CYAN}Pulling:${NC} $dir"
@@ -76,10 +87,10 @@ for dir in "${LPATH[@]}"; do
                     else
                         # Count the number of changed files
                         DIFF_COUNT=$(git diff --name-only $OLD_HEAD $NEW_HEAD | wc -l | xargs)
-                        echo -e "🚀 ${GREEN}Updated $DIFF_COUNT files.${NC}"
+                        echo -e "${GREEN}✔ Updated $DIFF_COUNT files.${NC}"
                     fi
                 else
-                    echo -e "❌ ${RED}Failed: $dir${NC}"
+                    echo -e "${RED}✘ Failed: $dir${NC}"
                 fi
             )
         fi
