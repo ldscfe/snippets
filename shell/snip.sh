@@ -56,7 +56,7 @@ if [[ ! -f "$LOCAL_PATH" ]]; then
     cp "$TEMP_FILE" "$LOCAL_PATH"
     chmod +x "$LOCAL_PATH"
 
-    echo -e "🚀 ${GREEN}Installed: ${LOCAL_PATH}${NC}"
+    echo -e "${GREEN}✔ Installed: ${LOCAL_PATH}${NC}"
     exit 0
 fi
 
@@ -71,7 +71,7 @@ perform_update() {
     cp "$TEMP_FILE" "$LOCAL_PATH"
     chmod +x "$LOCAL_PATH"
 
-    echo -e "🚀 ${GREEN}Updated: $LOCAL_PATH${NC}"
+    echo -e "${GREEN}✔ Updated: $LOCAL_PATH${NC}"
 }
 
 if [[ "$FORCE_UPDATE" == "Y" || "$FORCE_UPDATE" == "y" ]]; then
@@ -84,5 +84,5 @@ read -r -p "Update $FILE_NAME ? (y/N): " confirm
 if [[ "$confirm" =~ ^[Yy]$ ]]; then
     perform_update
 else
-    echo -e "⚠️ ${YELLOW}Canceled.${NC}"
+    echo -e "${YELLOW}⚠ Canceled.${NC}"
 fi
