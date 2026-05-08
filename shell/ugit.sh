@@ -50,7 +50,7 @@ echo -e "${BLUE}Action:${NC} ${GREEN}$ACTION${NC} | ${BLUE}User:${NC} ${CYAN}$(w
 for dir in "${LPATH[@]}"; do
     FULL_PATH="$BASE_DIR/$dir"
 
-    echo "------------------------------------------------"
+    echo -e "${NC}------------------------------------------------"
     if [ -d "$FULL_PATH" ]; then
         if [[ "$ACTION" == "status" ]]; then
             # Status
@@ -87,3 +87,4 @@ for dir in "${LPATH[@]}"; do
         echo -e "⚠️ ${YELLOW}Directory not found: $FULL_PATH${NC}"
     fi
 done
+echo -e "${NC}------------------------------------------------"
