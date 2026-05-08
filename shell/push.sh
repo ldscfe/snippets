@@ -1,49 +1,40 @@
 #!/bin/bash
-# =================================================================
-# Description: Automated Git status / commit / push script
-# Author: Adam Lee
-# Date: 2026-02-11
-# =================================================================
 
-# Color definitions
-COMMON_LIB="$HOME/bin/common.sh"
-if [ -f "$COMMON_LIB" ]; then
-    source "$COMMON_LIB"
+HELP='==============================================================================
+Script Name:    push.sh
+Description:    Automated Git status, commit, and push script.
+Author:         Adam Lee (ldscfe@gmail.com)
+Date:           2026-05-08
+Version:        1.1.0
+Compatibility:  macOS (BSD), Linux (GNU)
+
+Usage:
+    push.sh <project_dir> [commit_message]
+    push.sh -h | --help
+
+Arguments:
+    project_dir       Local path of the Git project (required).
+    commit_message    Custom commit message (optional).
+
+Examples:
+    push.sh .                          # Push current dir with default message
+    push.sh ~/repo "feat: update ui"   # Push specific repo with custom message
+==============================================================================
+'
+
+# --- Colors ---
+LIB="$HOME/bin/common.sh"; [ -f "$LIB" ] && source "$LIB"
+
+# --- Help ---
+if [[ "$#" -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
+    echo -e "${YELLOW}$HELP${NC}"
+    exit 0
 fi
 
 set -euo pipefail
 
-# -------- HELP --------
-show_help() {
-    echo -e "${GREEN}Git Auto-Push Script Help${NC}"
-    echo "-------------------------------------------------"
-    echo "Usage: $0 <project_dir> [commit_message]"
-    echo ""
-    echo "Arguments:"
-    echo "  project_dir      Local path of Git project (required)"
-    echo "  commit_message   Custom commit message (optional)"
-    echo ""
-    echo "Examples:"
-    echo "  $0 .                                 # Commit current directory with default message"
-    echo "  $0 ~/my-repo \"feat: add login\"       # Commit specified directory with custom message"
-    echo "  $0 -h / --help                       # Show this help information"
-    echo "-------------------------------------------------"
-}
-
-# -------- Argument Processing --------
-# Check if arguments are provided or help is requested
-if [[ $# -eq 0 ]] || [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
-    show_help
-    exit 0
-fi
-
 PROJECT_DIR="${1:-}"
-CUSTOM_MSG="${2:-}"
-
-if [[ -z "$PROJECT_DIR" ]]; then
-    echo -e "${YELLOW}Usage: $0 <project_dir> [commit_message]${NC}"
-    exit 1
-fi
+COMMIT_MSG="${2:-"chore: auto update by script $(date +'%Y-%m-%d %H:%M:%S')"}"
 
 if [[ ! -d "$PROJECT_DIR" ]]; then
     echo -e "${RED}[ERROR] Directory does not exist: $PROJECT_DIR${NC}"
@@ -80,17 +71,9 @@ case "$confirm" in
         ;;
 esac
 
-# -------- Commit Message --------
-DT="$(date '+%Y/%m/%d %H:%M:%S')"
-if [[ -n "$CUSTOM_MSG" ]]; then
-    COMMIT_MSG="$CUSTOM_MSG, $DT"
-else
-    COMMIT_MSG="chore: update files, $DT"
-fi
-
 # -------- Execute Git Operations --------
-echo "[STEP] git add ."
-git add .
+echo "[STEP] git add --all"
+git add --all
 
 echo "[STEP] git commit"
 git commit -m "$COMMIT_MSG"
