@@ -4,8 +4,8 @@ HELP='==========================================================================
 Script Name:    push.sh
 Description:    Automated Git status, commit, and push script.
 Author:         Adam Lee (ldscfe@gmail.com)
-Date:           2026-05-08
-Version:        1.1.0
+Date:           2026-05-09
+Version:        1.2.0
 Compatibility:  macOS (BSD), Linux (GNU)
 
 Usage:
@@ -56,7 +56,7 @@ git status
 echo "================================================="
 
 # -------- Check for Changes --------
-if git diff --quiet && git diff --cached --quiet; then
+if [[ -z "$(git status --porcelain)" ]]; then
     echo "[INFO] No changes detected. Nothing to commit."
     exit 0
 fi
