@@ -33,10 +33,9 @@
 
 ## 🚀 快速开始
 
-1. **克隆仓库**：
-
 ```bash
-git clone https://github.com/ldscfe/snippets.git
+curl -L https://raw.githubusercontent.com/ldscfe/snippets/refs/heads/main/shell/snip.sh -o ~/bin/snip
+bash snip common.sh
 ```
 
 ## 👤 贡献者
