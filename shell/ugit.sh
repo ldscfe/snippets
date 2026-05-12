@@ -65,7 +65,7 @@ for FULL_PATH in "${REPOS[@]}"; do
     echo -e "${NC}------------------------------------------------"
 
     if [[ "$ACTION" == "status" ]]; then
-        echo -e "${CYAN}Checking:${NC} $dir"
+        echo -e "${BLUE}Checking:${CYAN} $dir${NC}"
         (
             cd "$FULL_PATH" || exit 1
 
@@ -73,7 +73,7 @@ for FULL_PATH in "${REPOS[@]}"; do
             ST_OUTPUT=$(git status --porcelain)
 
             if [[ -n "$ST_OUTPUT" ]]; then
-                echo "$ST_OUTPUT"
+                echo -e "${YELLOW}$ST_OUTPUT${NC}"
             fi
 
             # Unpushed commits
