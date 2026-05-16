@@ -30,11 +30,10 @@ fi
 # --- Parse Arguments ---
 TARGET=""
 DEL_MODE=false
-RSYNC_OPTS="-avc"
+RSYNC_OPTS="-avcO"
 
 parse_kv_args "$@"
 
-# Validate Target
 if [ -z "$TARGET" ]; then
     echo -e "${RED}Error: target directory is required (e.g., target=/path/to/dir)${NC}"
     exit 1
@@ -54,23 +53,29 @@ echo -e "Target: ${CYAN}'$TARGET'${NC}"
 split_line
 echo -e "${BLUE}Running dry-run to calculate changes...${NC}"
 
-# --- 1. Dry Run & Capture Output ---
+# --- 1. Dry Run ---
 DRY_RUN_LOG=$(mktemp)
 rsync $RSYNC_OPTS --dry-run . "$TARGET" > "$DRY_RUN_LOG"
 
-# Display the dry-run output
+# --- 2. Count Changes ---
+FILE_COUNT=$(grep -v '/$' "$DRY_RUN_LOG" | grep -v 'building file list' | grep -v 'deleting' | grep -E -v '(bytes/sec|total size|speedup|^$)' | wc -l | tr -d ' ')
+
+# --- 3. Verification ---
+if [ "$FILE_COUNT" -eq 0 ]; then
+    echo -e "${GREEN}Everything is up-to-date. No synchronization needed.${NC}"
+    rm -f "$DRY_RUN_LOG"
+    exit 0
+fi
+
 cat "$DRY_RUN_LOG"
-split_line
-
-# --- 2. Count Real Changes ---
-# Filter out rsync metadata and directories to count actual files
-FILE_COUNT=$(grep -E -v '(building file list|bytes/sec|total size|speedup|^$)' "$DRY_RUN_LOG" | grep -v '/$' | wc -l | tr -d ' ')
-
 rm -f "$DRY_RUN_LOG"
 
-# --- 3. Verification Logic ---
+split_line
+
 if [ "$FILE_COUNT" -gt 10 ]; then
-    echo -e "${YELLOW}Summary: Found ${GREEN}$FILE_COUNT${YELLOW} file(s) to be synchronized."
+    echo -e "${YELLOW}Summary: Found ${GREEN}$FILE_COUNT${YELLOW} file(s) to be synchronized.${NC}"
+else
+    echo -e "${GREEN}Summary: Found $FILE_COUNT file(s) to be synchronized.${NC}"
 fi
 
 read -p "$(echo -e "${YELLOW}Are you sure you want to proceed with the actual synchronization? (y/N): ${NC}")" CONFIRM
@@ -79,7 +84,7 @@ if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
     exit 0
 fi
 
-# --- 4. Actual Execution ---
+# --- 4. Execution ---
 echo -e "${BLUE}Starting actual synchronization...${NC}"
 rsync $RSYNC_OPTS . "$TARGET"
 
@@ -88,5 +93,5 @@ if [ $? -eq 0 ]; then
     echo -e "${GREEN}Success: Sync complete.${NC}"
 else
     split_line
-    echo -e "${YELLOW}Error: Sync failed.${NC}"
+    echo -e "${RED}Error: Sync failed.${NC}"
 fi
