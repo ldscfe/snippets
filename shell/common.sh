@@ -1,9 +1,9 @@
 # ==============================================================================
 # Script Name:   common.sh
-# Description:   Common constants and UI definitions
+# Description:   Common Constants and Utilities
 # Author:        Adam Lee (ldscfe@gmail.com)
-# Date:          2026-03-20
-# Version:       1.0.0
+# Date:          2026-05-16
+# Version:       1.1.0
 # ==============================================================================
 
 # --- Color Definitions (ANSI Escape Codes) ---
@@ -16,3 +16,20 @@ CYAN='\033[0;36m'         # PATHS / USERS
 LIGHT_GRAY='\033[0;37m'   # SECONDARY
 DARK_GRAY='\033[1;30m'    # SKIP / ACTION / TRACE
 NC='\033[0m'              # No Color (Reset)
+
+# --- Key-Value Argument Parser
+# Usage: parse_kv_args "$@"
+# Supports: key=value k2=v2... -> KEY=value K2=v2...
+parse_kv_args() {
+    for arg in "$@"; do
+        if [[ "$arg" == *=* ]]; then
+            local key="${arg%%=*}"
+            local value="${arg#*=}"
+            
+            # xxx -> XXX
+            local var_name=$(echo "$key" | tr '[:lower:]' '[:upper:]')
+            
+            eval "$var_name=\"$value\""
+        fi
+    done
+}
