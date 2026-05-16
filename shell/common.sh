@@ -17,6 +17,14 @@ LIGHT_GRAY='\033[0;37m'   # SECONDARY
 DARK_GRAY='\033[1;30m'    # SKIP / ACTION / TRACE
 NC='\033[0m'              # No Color (Reset)
 
+# --- split line (default 60)
+split_line() {
+    local len=${1:-60}
+    echo -ne "${BLUE}"
+    printf '%*s\n' "$len" '' | tr ' ' '-'
+    echo -ne "${NC}"
+}
+
 # --- Key-Value Argument Parser
 # Usage: parse_kv_args "$@"
 # Supports: key=value k2=v2... -> KEY=value K2=v2...
