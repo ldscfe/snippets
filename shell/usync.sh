@@ -4,17 +4,20 @@ HELP='==========================================================================
 Script Name:    usync.sh
 Description:    Sync current directory to an exact target directory with confirmation.
 Author:         Adam Lee (ldscfe@gmail.com)
-Date:           2026-05-16
-Version:        1.0.0
+Date:           2026-05-26
+Version:        1.2.0
 Compatibility:  macOS (BSD), Linux (GNU)
 
 Usage:
     usync.sh target=/path/to/target [del=YES]
+    usync.sh target=rc-agent [del=YES]       (Auto-completes based on LPATH)
     usync.sh -h | --help
 
 Examples:
+    usync.sh target=rc-agent
+    usync.sh target=rc-agent del=YES
     usync.sh target=/Users/adamlee/Documents/github/rc-agent/.AI
-    usync.sh target=/Users/adamlee/Documents/github/rc-agent del=YES
+
 ==============================================================================
 '
 
@@ -28,8 +31,9 @@ if [[ "$1" == "-h" || "$1" == "--help" || "$#" -lt 1 ]]; then
 fi
 
 # --- Parse Arguments ---
+LPATH="/Users/adamlee/Documents/github"
+SOURCE="${LPATH}/ALDS/.AI/"
 TARGET=""
-DEL_MODE=false
 RSYNC_OPTS="-avcO"
 
 parse_kv_args "$@"
@@ -39,23 +43,42 @@ if [ -z "$TARGET" ]; then
     exit 1
 fi
 
-# --- Build rsync Options ---
+if [[ "$TARGET" != /* ]]; then
+    TARGET="${LPATH}/${TARGET}/.AI"
+fi
+
+TARGET="${TARGET%/}"
+
+if [ ! -d "$TARGET" ]; then
+    echo -e "${RED}Error: Target directory '$TARGET' does not exist.${NC}"
+    exit 1
+fi
+
+if [ "$SOURCE" = "${TARGET}/" ] || [ "$SOURCE" = "$TARGET" ]; then
+    echo -e "${RED}Error: Source and Target are the same directory ($SOURCE). Sync aborted.${NC}"
+    exit 1
+fi
+
+# --- Build Options ---
 split_line
-if [ "$DEL_MODE" = true ]; then
+
+if [ "$DEL" = "YES" ]; then
     RSYNC_OPTS="$RSYNC_OPTS --delete"
     echo -e "Mode:   ${YELLOW}[FULL SYNC]${NC} - '--delete' is ENABLED."
 else
     echo -e "Mode:   ${GREEN}[INCREMENTAL SYNC]${NC} - Files in target won't be deleted."
 fi
 
-echo -e "Source: ${CYAN}'$(pwd)/'${NC}"
+echo -e "Source: ${CYAN}'$SOURCE'${NC}"
 echo -e "Target: ${CYAN}'$TARGET'${NC}"
+
 split_line
+
 echo -e "${BLUE}Running dry-run to calculate changes...${NC}"
 
 # --- 1. Dry Run ---
 DRY_RUN_LOG=$(mktemp)
-rsync $RSYNC_OPTS --dry-run . "$TARGET" > "$DRY_RUN_LOG"
+rsync $RSYNC_OPTS --dry-run $SOURCE "$TARGET" > "$DRY_RUN_LOG"
 
 # --- 2. Count Changes ---
 FILE_COUNT=$(grep -v '/$' "$DRY_RUN_LOG" | grep -v 'building file list' | grep -v 'deleting' | grep -E -v '(bytes/sec|total size|speedup|^$)' | wc -l | tr -d ' ')
@@ -86,7 +109,7 @@ fi
 
 # --- 4. Execution ---
 echo -e "${BLUE}Starting actual synchronization...${NC}"
-rsync $RSYNC_OPTS . "$TARGET"
+rsync $RSYNC_OPTS $SOURCE "$TARGET"
 
 if [ $? -eq 0 ]; then
     split_line
