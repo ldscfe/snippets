@@ -24,7 +24,7 @@
 | 16   | ugit.sh                  | git 批量操作指定目录（status, pull）                          | ./ugit.sh [pull]                                         | 简化 git 日常批量处理          |
 | 17   | snip.sh                  | 本仓库脚本一键下载工具（通用脚本分发实现）                    | bash snip.sh common.sh                                   | 在线拉取指定脚本到本地         |
 | 18   | tups.sh                  | 利用 tmux 托管后台进程的轻量级管理器。 | ./tups.sh rc-agent    | 后台启动 rc-agent  |
-| 19   | usync.sh                 | 跨主机目录同步（批量 rsync 封装）                             | ./usync.sh hosts.txt /src /dst                           | 支持多主机 SSH 批同步          |
+| 19   | usync.sh                 | 将 ${LPATH}/ALDS/.AI/ 下的内容，同步给指定目录   | ./usync.sh rc-agent  | ALDS/.AI/ -> rc-agent/.AI/  |
 
 ### 模式参数对比（pzip.sh & tls.sh 逻辑）
 
