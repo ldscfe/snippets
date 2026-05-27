@@ -20,10 +20,10 @@
 | 12   | claude_check.sh          | Claude 服务相关检查与健康检测脚本                             | ./claude_check.sh                                        | 服务健康巡检                  |
 | 13   | start_claude_screen.sh   | 启动 Claude 相关服务/容器（screen 后台模式）                   | ./start_claude_screen.sh                                 | 后台守护式启动                |
 | 14   | push.sh                  | 推送/发布自动化脚本，适用 git 以外场景                        | ./push.sh . "fix bug"                                    | 灵活化批量发布                |
-| 15   | rep.sh                   | 当前目录及子目录下，批量正则替换操作脚本                      | ./rep.sh 'old' 'new'                                     | 替换内容支持递归与正则         |
+| 15   | rpl.sh                   | 当前目录及子目录下，批量正则替换操作脚本                      | ./rpl.sh 'old' 'new'                                     | 替换内容支持递归与正则         |
 | 16   | ugit.sh                  | git 批量操作指定目录（status, pull）                          | ./ugit.sh [pull]                                         | 简化 git 日常批量处理          |
 | 17   | snip.sh                  | 本仓库脚本一键下载工具（通用脚本分发实现）                    | bash snip.sh common.sh                                   | 在线拉取指定脚本到本地         |
-| 18   | tups.sh                  | 合并同类文件夹工具                                            | ./tups.sh src1 src2 dst                                  | 多路径文件/目录合并            |
+| 18   | tups.sh                  | 利用 tmux 托管后台进程的轻量级管理器。 | ./tups.sh rc-agent    | 后台启动 rc-agent  |
 | 19   | usync.sh                 | 跨主机目录同步（批量 rsync 封装）                             | ./usync.sh hosts.txt /src /dst                           | 支持多主机 SSH 批同步          |
 
 ### 模式参数对比（pzip.sh & tls.sh 逻辑）
