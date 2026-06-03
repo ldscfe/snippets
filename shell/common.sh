@@ -1,9 +1,10 @@
+#!/bin/bash
 # ==============================================================================
 # Script Name:   common.sh
 # Description:   Common Constants and Utilities
 # Author:        Adam Lee (ldscfe@gmail.com)
-# Date:          2026-05-16
-# Version:       1.1.0
+# Date:          2026-06-03
+# Version:       1.2.0
 # ==============================================================================
 
 # --- Color Definitions (ANSI Escape Codes) ---
@@ -17,27 +18,41 @@ LIGHT_GRAY='\033[0;37m'   # SECONDARY
 DARK_GRAY='\033[1;30m'    # SKIP / ACTION / TRACE
 NC='\033[0m'              # No Color (Reset)
 
+# echo Error, exit
+die() {
+    local msg="${1:-"Unknown fatal error."}"
+    
+    echo -e "${RED}Error: $msg${NC}" >&2
+    exit 1
+}
+
 # --- split line (default 60)
 split_line() {
     local len=${1:-60}
     echo -ne "${BLUE}"
-    printf '%*s\n' "$len" '' | tr ' ' '-'
-    echo -ne "${NC}"
+    printf '%.0s-' $(seq 1 "$len")
+    echo -e "${NC}"
 }
 
 # --- Key-Value Argument Parser
 # Usage: parse_kv_args "$@"
 # Supports: key=value k2=v2... -> KEY=value K2=v2...
 parse_kv_args() {
+    local arg key value var_name
     for arg in "$@"; do
         if [[ "$arg" == *=* ]]; then
-            local key="${arg%%=*}"
-            local value="${arg#*=}"
+            key="${arg%%=*}"
+            value="${arg#*=}"
             
             # xxx -> XXX
-            local var_name=$(echo "$key" | tr '[:lower:]' '[:upper:]')
+            var_name=$(echo "$key" | tr '[:lower:]' '[:upper:]')
             
-            eval "$var_name=\"$value\""
+            printf -v "$var_name" '%s' "$value"
+            export "$var_name"
         fi
     done
 }
+
+export -f die
+export -f split_line
+export -f parse_kv_args
