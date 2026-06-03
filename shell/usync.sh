@@ -4,19 +4,16 @@ HELP='==========================================================================
 Script Name:    usync.sh
 Description:    Sync current directory to an exact target directory with confirmation.
 Author:         Adam Lee (ldscfe@gmail.com)
-Date:           2026-05-26
-Version:        1.2.0
+Date:           2026-06-03
+Version:        1.5.0
 Compatibility:  macOS (BSD), Linux (GNU)
 
 Usage:
-    usync.sh target=/path/to/target [del=YES]
-    usync.sh target=rc-agent [del=YES]       (Auto-completes based on LPATH)
+    usync.sh source=/path/to/source target=/path/to/target [del=YES]
     usync.sh -h | --help
 
 Examples:
-    usync.sh target=rc-agent
-    usync.sh target=rc-agent del=YES
-    usync.sh target=/Users/adamlee/Documents/github/rc-agent/.AI
+    usync.sh source=ALDS/.AI/ target=wikicodec/.AI/ del=YES
 
 ==============================================================================
 '
@@ -31,30 +28,22 @@ if [[ "$1" == "-h" || "$1" == "--help" || "$#" -lt 1 ]]; then
 fi
 
 # --- Parse Arguments ---
-LPATH="/Users/adamlee/Documents/github"
-SOURCE="${LPATH}/ALDS/.AI/"
+SOURCE=""
 TARGET=""
 RSYNC_OPTS="-avcO"
 
 parse_kv_args "$@"
 
-if [ -z "$TARGET" ]; then
-    echo -e "${RED}Error: target directory is required (e.g., target=/path/to/dir)${NC}"
-    exit 1
-fi
+[ -n "$SOURCE" ] || die "source directory is required (e.g., source=/path/to/source)"
+[ -n "$TARGET" ] || die "target directory is required (e.g., target=/path/to/target)"
 
-if [[ "$TARGET" != /* ]]; then
-    TARGET="${LPATH}/${TARGET}/.AI"
-fi
+[ -d "$SOURCE" ] || die "Source directory '$SOURCE' does not exist."
+[ -d "$TARGET" ] || die "Target directory '$TARGET' does not exist."
 
-TARGET="${TARGET%/}"
+[[ "$SOURCE" != */ ]] && SOURCE="${SOURCE}/"
+[[ "$TARGET" != */ ]] && TARGET="${TARGET}/"
 
-if [ ! -d "$TARGET" ]; then
-    echo -e "${RED}Error: Target directory '$TARGET' does not exist.${NC}"
-    exit 1
-fi
-
-if [ "$SOURCE" = "${TARGET}/" ] || [ "$SOURCE" = "$TARGET" ]; then
+if [ "$SOURCE" = "$TARGET" ]; then
     echo -e "${RED}Error: Source and Target are the same directory ($SOURCE). Sync aborted.${NC}"
     exit 1
 fi
@@ -81,7 +70,11 @@ DRY_RUN_LOG=$(mktemp)
 rsync $RSYNC_OPTS --dry-run $SOURCE "$TARGET" > "$DRY_RUN_LOG"
 
 # --- 2. Count Changes ---
-FILE_COUNT=$(grep -v '/$' "$DRY_RUN_LOG" | grep -v 'building file list' | grep -v 'deleting' | grep -E -v '(bytes/sec|total size|speedup|^$)' | wc -l | tr -d ' ')
+FILE_COUNT=$(grep -v '/$' "$DRY_RUN_LOG" | \
+             grep -v 'building file list' | \
+             grep -v 'deleting' | \
+             grep -E -v '(bytes/sec|total size|speedup|sent|received|Transfer starting|^$)' | \
+             wc -l | tr -d ' ')
 
 # --- 3. Verification ---
 if [ "$FILE_COUNT" -eq 0 ]; then
@@ -101,7 +94,8 @@ else
     echo -e "${GREEN}Summary: Found $FILE_COUNT file(s) to be synchronized.${NC}"
 fi
 
-read -p "$(echo -e "${YELLOW}Are you sure you want to proceed with the actual synchronization? (y/N): ${NC}")" CONFIRM
+echo -n -e "${YELLOW}Are you sure you want to proceed with the actual synchronization? (y/N): ${NC}"
+read -r CONFIRM
 if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
     echo -e "${YELLOW}Sync cancelled by user.${NC}"
     exit 0
