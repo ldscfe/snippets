@@ -1,6 +1,6 @@
 # Dotfiles Bin & Alias Management
 
-这个目录用于管理个人高频使用的命令的环境别名与常用参数帮助 (`alias/*.sh`)，同时包含公共函数库与独立脚本。支持 **macOS (Zsh)** 和 **Linux (Bash/Zsh)** 环境。
+这个目录用于管理个人高频使用的命令的环境别名与常用参数帮助 (`alias/*.sh`)。支持 **macOS (Zsh)** 和 **Linux (Bash/Zsh)** 环境。
 
 ---
 
@@ -37,7 +37,6 @@ LIB="$HOME/bin/common.sh"; [ -f "$LIB" ] && source "$LIB"
 # load ~/bin/alias
 CUSTOM_DIR="$HOME/bin/alias"
 if [ -d "$CUSTOM_DIR" ]; then
-    # (N) 是 Zsh 的 NullGlob 语法，确保在没有匹配到文件时不会报错
     for config_file in "$CUSTOM_DIR"/*.{sh,zsh}(N); do
         [ -f "$config_file" ] && source "$config_file"
     done
@@ -45,7 +44,7 @@ fi
 
 ```
 
-### 2. 应用更改
+### 2. 立即生效
 
 保存文件后，在终端执行以下命令使其立即生效：
 
