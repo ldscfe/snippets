@@ -53,6 +53,8 @@ parse_kv_args() {
     done
 }
 
-export -f die
-export -f split_line
-export -f parse_kv_args
+if [ -n "$BASH_VERSION" ]; then
+    export -f die
+    export -f split_line
+    export -f parse_kv_args
+fi
