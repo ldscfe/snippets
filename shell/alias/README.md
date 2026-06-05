@@ -37,8 +37,10 @@ LIB="$HOME/bin/common.sh"; [ -f "$LIB" ] && source "$LIB"
 # load ~/bin/alias
 CUSTOM_DIR="$HOME/bin/alias"
 if [ -d "$CUSTOM_DIR" ]; then
-    for config_file in "$CUSTOM_DIR"/*.{sh,zsh}(N); do
-        [ -f "$config_file" ] && source "$config_file"
+    for config_file in "$CUSTOM_DIR"/*; do
+        [[ "$config_file" =~ \.(sh|zsh)$ && -f "$config_file" ]] || continue
+        
+        source "$config_file"
     done
 fi
 

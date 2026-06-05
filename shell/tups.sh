@@ -8,26 +8,35 @@ Date:           2026-05-22
 Version:        1.0.0
 Compatibility:  macOS (BSD), Linux (GNU)
 
-# Config: $HOME/bin/tups.yaml
-#         $HOME/bin/common.sh
-services:
+Dependencies:   This script requires "yq" and "tmux" to be installed.
+                - macOS : brew install yq tmux
+                - Ubuntu: sudo snap install yq tmux
+                - Other:  wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
+                          chmod +x /usr/local/bin/yq
+
+# Config
+  ~/bin/tups.sh
+  ~/bin/tups.yaml
+
+# tups.yaml
   claude:
     name: "Claude"
-    cwd: "$HOME/free-claude-code"
-    cmd: "uv run uvicorn server:app --host 127.0.0.1 --port 8082"
+    cwd: "$HOME/"
+    cmd: "fcc-server"
 
   rc-agent:
     name: "rc-agent"
     cwd: "$HOME/Documents/github/rc-agent"
     cmd: "RUST_LOG=info ../rust_target/release/rc-agent"
 
-# Usage:
-    tups <service_name>
-    tups -h | --help
+# Usage
+  tups <service_name>
+  tups -h | --help
 
-# Examples:
-    tups claude      # Start the Claude server
-    tups rc-agent    # Start the rc-agent server
+# Examples
+  tups claude      # Start the Claude server
+  tups rc-agent    # Start the rc-agent server
+
 ==============================================================================
 '
 
