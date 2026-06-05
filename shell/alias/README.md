@@ -14,7 +14,7 @@
 ├── usync.sh           # 自定义独立工具脚本 (如同步脚本)
 └── alias/             # 模块化别名与高频参数配置目录
     ├── find.sh        # 查找命令常用参数别名
-    ├── git.sh         # Git 常用快捷键与别名
+    ├── git.sh         # Git 常用快捷键与别名, push(Automated commit & push)
     ├── rsync.sh       # Rsync 常用同步参数别名
     └── tmux.sh        # Tmux 会话管理复用别名
 
