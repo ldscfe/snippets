@@ -23,7 +23,7 @@ Common Options:
 =============================================================================='
 
     if [ $# -eq 0 ]; then
-        echo -e "${YELLOW}${HELP}${NC}\n"
+        echo -e "${CYAN}${HELP}${NC}\n"
         echo "Usage example: ursync local/ user@remote:/path/"
     else
         command rsync "$@"

@@ -22,8 +22,7 @@ Commands & Shortcuts:
 ------------------------------------------------------------------------------'
 
     if [ $# -eq 0 ]; then
-        # 这里使用 GREEN 绿色作为 Git 的主色调，如果没有定义则会留空不改变颜色
-        echo -e "${GREEN}${HELP}${NC}\n"
+        echo -e "${CYAN}${HELP}${NC}\n"
         
         if command git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
             echo -e "${YELLOW}Current Repository Status:${NC}"
@@ -68,8 +67,6 @@ if [[ "$#" -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
     return 0
 fi
 
-set -euo pipefail
-
 PROJECT_DIR="${1:-}"
 COMMIT_MSG="${2:-"chore: auto update by script $(date +'%Y-%m-%d %H:%M:%S')"}"
 
@@ -87,7 +84,7 @@ fi
 
 # -------- Git Status --------
 echo "================================================="
-echo "📦 Project: $(pwd)"
+echo "Project: $(pwd)"
 echo "-------------------------------------------------"
 git status
 echo "================================================="
@@ -99,7 +96,8 @@ if [[ -z "$(git status --porcelain)" ]]; then
 fi
 
 # -------- User Confirmation --------
-read -r -p "Confirm adding and committing all changes? (y/n): " confirm
+echo -ne "${CYAN}Confirm adding and committing all changes? (y/n): ${NC}"
+read -r confirm
 case "$confirm" in
     y|Y) ;;
     *)
